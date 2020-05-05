@@ -1,6 +1,6 @@
 [package]
 name = "reaves"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["SOFe <sofe2038@gmail.com>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -8,6 +8,3 @@ repository = "https://github.com/SOF3/reaves"
 homepage = "https://github.com/SOF3/reaves"
 readme = "README.md"
 description = "Send a copy of the bytes read in a Read to a Write"
-
-[dependencies]
-

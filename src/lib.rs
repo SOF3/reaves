@@ -1,6 +1,7 @@
-use std::io::{Read, Result, Write};
+use std::io::{Read, Result, Write, BufRead, Seek, SeekFrom};
 
 /// Delegates reads from the wrapped `Read` and writes a copy to the wrapped `Write`
+#[derive(Debug, Clone)]
 pub struct Reaves<R: Read, W: Write> {
     r: R,
     w: W,
@@ -9,6 +10,10 @@ pub struct Reaves<R: Read, W: Write> {
 impl<R: Read, W: Write> Reaves<R, W> {
     pub fn new(r: R, w: W) -> Self {
         Self { r, w }
+    }
+
+    pub fn into_inner(self) -> (R, W) {
+        (self.r, self.w)
     }
 }
 
@@ -20,6 +25,22 @@ impl<R: Read, W: Write> Read for Reaves<R, W> {
             self.w.write_all(&buf[..ret])?;
         }
         Ok(ret)
+    }
+}
+
+impl<R: BufRead, W: Write> BufRead for Reaves<R, W> {
+    fn fill_buf(&mut self) -> Result<&[u8]> {
+        self.r.fill_buf()
+    }
+
+    fn consume(&mut self, amt: usize) {
+        self.r.consume(amt)
+    }
+}
+
+impl<R: Read + Seek, W: Write> Seek for Reaves<R, W> {
+    fn seek(&mut self, pos: SeekFrom) -> Result<u64> {
+        self.r.seek(pos)
     }
 }
 
